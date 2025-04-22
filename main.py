@@ -4,7 +4,7 @@ import glob
 
 # === Config ===
 image_folder = r"E:\\college\\Sem_VI\\Project\\Image_control\\Cat"  # Put your images in this folder
-zoom_step = 0.1
+zoom_step = 0.001
 min_zoom = 0.1
 max_zoom = 5.0
 
@@ -18,7 +18,7 @@ if not image_paths:
     exit()
 
 index = 0
-zoom_factor = 1.0
+zoom_factor = 0.1
 
 def display_image(img_path, zoom):
     img = cv2.imread(img_path)
@@ -38,16 +38,20 @@ while True:
     # === Navigation ===
     if key == ord('j'):
         index = (index + 1) % len(image_paths)
-        zoom_factor = 1.0
+        zoom_factor = 0.1
+        print("➡️ Next image")
     elif key == ord('f'):
         index = (index - 1) % len(image_paths)
-        zoom_factor = 1.0
+        zoom_factor = 0.1
+        print("⬅️ Previous image")
 
     # === Zooming ===
     elif key == ord('+') or key == ord('='):
         zoom_factor = min(max_zoom, zoom_factor + zoom_step)
+        print(f"🔍 Zooming in: {zoom_factor:.3f}")
     elif key == ord('-') or key == ord('_'):
         zoom_factor = max(min_zoom, zoom_factor - zoom_step)
+        print(f"🔍 Zooming out: {zoom_factor:.3f}")
 
     # === Delete ===
     elif key == ord('d'):
