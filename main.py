@@ -1,0 +1,68 @@
+import cv2
+import os
+import glob
+
+# === Config ===
+image_folder = r"E:\\college\\Sem_VI\\Project\\Image_control\\Cat"  # Put your images in this folder
+zoom_step = 0.1
+min_zoom = 0.1
+max_zoom = 5.0
+
+# === Init ===
+image_paths = glob.glob(os.path.join(image_folder, '*.*'))
+supported_ext = ['.jpg', '.jpeg', '.png', '.bmp', '.gif']
+image_paths = [p for p in image_paths if os.path.splitext(p)[1].lower() in supported_ext]
+
+if not image_paths:
+    print("⚠️ No images found in the folder.")
+    exit()
+
+index = 0
+zoom_factor = 1.0
+
+def display_image(img_path, zoom):
+    img = cv2.imread(img_path)
+    if img is None:
+        print(f"❌ Failed to load: {img_path}")
+        return
+    h, w = img.shape[:2]
+    resized = cv2.resize(img, (int(w * zoom), int(h * zoom)))
+    cv2.imshow("Image Viewer", resized)
+
+while True:
+    current_image_path = image_paths[index]
+    display_image(current_image_path, zoom_factor)
+
+    key = cv2.waitKey(0)
+
+    # === Navigation ===
+    if key == ord('j'):
+        index = (index + 1) % len(image_paths)
+        zoom_factor = 1.0
+    elif key == ord('f'):
+        index = (index - 1) % len(image_paths)
+        zoom_factor = 1.0
+
+    # === Zooming ===
+    elif key == ord('+') or key == ord('='):
+        zoom_factor = min(max_zoom, zoom_factor + zoom_step)
+    elif key == ord('-') or key == ord('_'):
+        zoom_factor = max(min_zoom, zoom_factor - zoom_step)
+
+    # === Delete ===
+    elif key == ord('d'):
+        print(f"🗑️ Deleting: {current_image_path}")
+        os.remove(current_image_path)
+        del image_paths[index]
+        if not image_paths:
+            print("🧼 All images deleted. Exiting.")
+            break
+        index = index % len(image_paths)
+        zoom_factor = 1.0
+
+    # === Exit ===
+    elif key == 27:  # Esc key
+        print("👋 Exiting.")
+        break
+
+cv2.destroyAllWindows()
