@@ -3,7 +3,7 @@ import os
 import glob
 
 # === Config ===
-image_folder = r"E:\\college\\Sem_VI\\Project\\Image_control\\Cat"  # Put your images in this folder
+image_folder = r"E:\\college\\Sem_VI\\Project\\Image_control\\resources"  # Put your images in this folder
 zoom_step = 0.001
 min_zoom = 0.1
 max_zoom = 5.0
@@ -55,14 +55,19 @@ while True:
 
     # === Delete ===
     elif key == ord('d'):
-        print(f"🗑️ Deleting: {current_image_path}")
-        os.remove(current_image_path)
-        del image_paths[index]
-        if not image_paths:
-            print("🧼 All images deleted. Exiting.")
-            break
-        index = index % len(image_paths)
-        zoom_factor = 1.0
+        print("❓ Press 'd' again to confirm deletion.")
+        key = cv2.waitKey(2000)  # Wait for up to 2 seconds for the second 'd'
+        if key == ord('d'):
+            print(f"🗑️ Deleted current file: {current_image_path}")
+            os.remove(current_image_path)
+            del image_paths[index]
+            if not image_paths:
+                print("🧼 All images deleted. Exiting.")
+                break
+            index = index % len(image_paths)
+            zoom_factor = 0.1
+        else:
+            print("❌ Deletion canceled.")
 
     # === Exit ===
     elif key == 27:  # Esc key
